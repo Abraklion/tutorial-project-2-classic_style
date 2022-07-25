@@ -163,7 +163,7 @@ const modals = () => {
           modal = document.querySelector(modalSelector),
           close = document.querySelector(closeSelector),
           windows = document.querySelectorAll('[data-modal]'),
-          scroll = Object(_core_calcScroll__WEBPACK_IMPORTED_MODULE_0__["calcScroll"])();
+          scroll = document.documentElement.offsetWidth > 991 ? Object(_core_calcScroll__WEBPACK_IMPORTED_MODULE_0__["calcScroll"])() : 0;
 
     const hideAllModals = () => {
       // скрывает все модальные окна
@@ -203,7 +203,8 @@ const modals = () => {
   function showModalByTime(selector, time) {
     // показывает интересующию нас модалку через определенное время
     setTimeout(function () {
-      let display;
+      let scroll = document.documentElement.offsetWidth > 991 ? Object(_core_calcScroll__WEBPACK_IMPORTED_MODULE_0__["calcScroll"])() : 0,
+          display;
       document.querySelectorAll('[data-modal]').forEach(item => {
         if (getComputedStyle(item).display !== 'none') {
           display = "block";
@@ -213,6 +214,7 @@ const modals = () => {
       if (!display) {
         document.querySelector(selector).style.display = 'block';
         document.body.style.overflow = "hidden";
+        document.body.style.marginRight = `${scroll}px`;
       }
     }, time);
   }
