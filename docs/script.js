@@ -113,6 +113,110 @@ const calcScroll = () => {
 
 /***/ }),
 
+/***/ "./src/js/core/checkTextInputs.js":
+/*!****************************************!*\
+  !*** ./src/js/core/checkTextInputs.js ***!
+  \****************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+const checkTextInputs = selector => {
+  /**
+   * маска для валидации имя и сообщения (удаляет английские буквы)
+   * selector -> селектор на который навешиваем маску
+   */
+  const txtInputs = document.querySelectorAll(selector);
+  txtInputs.forEach(input => {
+    input.addEventListener('keypress', function (e) {
+      if (e.key.match(/[^а-яё 0-9]/ig)) {
+        e.preventDefault();
+      }
+    });
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (checkTextInputs);
+
+/***/ }),
+
+/***/ "./src/js/core/mask.js":
+/*!*****************************!*\
+  !*** ./src/js/core/mask.js ***!
+  \*****************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+const mask = selector => {
+  /**
+   * маска для валидации телефона
+   * selector -> селектор на который навешиваем маску
+   */
+  let setCursorPosition = (pos, elem) => {
+    /**
+     * устанавливает позицию курсора
+     * pos -> позиция курсора
+     * elem -> элемент в которой будет устанавливать курсор
+     */
+    elem.focus();
+
+    if (elem.setSelectionRange) {
+      elem.setSelectionRange(pos, pos);
+    } else if (elem.createTextRange) {
+      // для Internet Explorer
+      let range = elem.createTextRange();
+      range.collapse(true);
+      range.moveEnd('character', pos);
+      range.moveStart('character', pos);
+      range.select();
+    }
+  };
+
+  function createMask(event) {
+    /**
+     * маска формата телефона
+     * event -> объект событие
+     */
+    let matrix = '+7 (___) ___ __ __',
+        // матрица маски
+    i = 0,
+        // итератор
+    def = matrix.replace(/\D/g, ''),
+        // найдет в матрицы только цифры, не цифры заменит на ''
+    val = this.value.replace(/\D/g, ''); // найдет в элементе с которым мы взаимодействуем только цифры, не цифры заменит на ''
+
+    if (def.length >= val.length) {
+      val = def;
+    }
+
+    this.value = matrix.replace(/./g, function (a) {
+      return /[_\d]/.test(a) && i < val.length ? val.charAt(i++) : i >= val.length ? '' : a;
+    });
+
+    if (event.type === 'blur') {
+      if (this.value.length === 2) {
+        this.value = '';
+      }
+    } else {
+      setCursorPosition(this.value.length, this);
+    }
+  }
+
+  let inputs = document.querySelectorAll(selector);
+  inputs.forEach(input => {
+    input.addEventListener('input', createMask);
+    input.addEventListener('focus', createMask);
+    input.addEventListener('blur', createMask);
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (mask);
+
+/***/ }),
+
 /***/ "./src/js/main.js":
 /*!************************!*\
   !*** ./src/js/main.js ***!
@@ -148,6 +252,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _core_mask__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core/mask */ "./src/js/core/mask.js");
+/* harmony import */ var _core_checkTextInputs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../core/checkTextInputs */ "./src/js/core/checkTextInputs.js");
+
+
+
 const forms = () => {
   /**
    * МОДУЛЬ ДЛЯ РАБОТЫ С ФОРМАМИ
@@ -158,7 +267,11 @@ const forms = () => {
    */
   const form = document.querySelectorAll('form'),
         inputs = document.querySelectorAll('input'),
-        upload = document.querySelectorAll('[name="upload"]');
+        upload = document.querySelectorAll('[name="upload"]'); // маски
+
+  Object(_core_mask__WEBPACK_IMPORTED_MODULE_0__["default"])('[name="phone"]');
+  Object(_core_checkTextInputs__WEBPACK_IMPORTED_MODULE_1__["default"])('[name="name"]');
+  Object(_core_checkTextInputs__WEBPACK_IMPORTED_MODULE_1__["default"])('[name="message"]');
   const message = {
     loading: 'Загрузка...',
     success: 'Спасибо! Скоро мы с вами свяжемся',

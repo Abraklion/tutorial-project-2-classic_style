@@ -1,3 +1,6 @@
+import mask from "../core/mask";
+import checkTextInputs from "../core/checkTextInputs";
+
 const forms = () => {
 
   /**
@@ -11,6 +14,11 @@ const forms = () => {
   const form = document.querySelectorAll('form'),
     inputs = document.querySelectorAll('input'),
     upload = document.querySelectorAll('[name="upload"]');
+
+  // маски
+  mask('[name="phone"]');
+  checkTextInputs('[name="name"]');
+  checkTextInputs('[name="message"]');
 
   const message = {
     loading: 'Загрузка...',
