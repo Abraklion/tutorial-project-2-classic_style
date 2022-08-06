@@ -230,6 +230,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_sliders__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/sliders */ "./src/js/modules/sliders.js");
 /* harmony import */ var _modules_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/forms */ "./src/js/modules/forms.js");
 /* harmony import */ var _modules_showMoreStyles__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/showMoreStyles */ "./src/js/modules/showMoreStyles.js");
+/* harmony import */ var _modules_showMoreStylesDb__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/showMoreStylesDb */ "./src/js/modules/showMoreStylesDb.js");
+
 
 
 
@@ -240,8 +242,9 @@ window.addEventListener('DOMContentLoaded', () => {
   Object(_modules_modals__WEBPACK_IMPORTED_MODULE_0__["default"])();
   Object(_modules_sliders__WEBPACK_IMPORTED_MODULE_1__["default"])('.feedback-slider-item', 'horizontal', '.main-prev-btn', '.main-next-btn');
   Object(_modules_sliders__WEBPACK_IMPORTED_MODULE_1__["default"])('.main-slider-item', 'vertical');
-  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_2__["default"])();
-  Object(_modules_showMoreStyles__WEBPACK_IMPORTED_MODULE_3__["default"])('.button-styles', '.styles-2');
+  Object(_modules_forms__WEBPACK_IMPORTED_MODULE_2__["default"])(); // showMoreStyles('.button-styles', '.styles-2');
+
+  Object(_modules_showMoreStylesDb__WEBPACK_IMPORTED_MODULE_4__["default"])('.button-styles', '#styles .row');
 });
 
 /***/ }),
@@ -257,6 +260,8 @@ window.addEventListener('DOMContentLoaded', () => {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core_mask__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core/mask */ "./src/js/core/mask.js");
 /* harmony import */ var _core_checkTextInputs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../core/checkTextInputs */ "./src/js/core/checkTextInputs.js");
+/* harmony import */ var _services_requests__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../services/requests */ "./src/js/services/requests.js");
+
 
 
 
@@ -286,19 +291,6 @@ const forms = () => {
   const path = {
     designer: 'assets/server.php',
     question: 'assets/question.php'
-  };
-
-  const postData = async (url, data) => {
-    /**
-     * асинхронный запрос к серверу
-     * url     -> адрес
-     * data   -> данные для передачи на сервер
-     */
-    let res = await fetch(url, {
-      method: "POST",
-      body: data
-    });
-    return await res.text();
   };
 
   const clearInputs = () => {
@@ -348,7 +340,7 @@ const forms = () => {
       let api;
       item.closest('.popup-design') || item.classList.contains('calc_form') ? api = path.designer : api = path.question;
       console.log(api);
-      postData(api, formData).then(res => {
+      Object(_services_requests__WEBPACK_IMPORTED_MODULE_2__["postData"])(api, formData).then(res => {
         console.log(res);
         statusImg.setAttribute('src', message.ok);
         textMessage.textContent = message.success;
@@ -533,6 +525,57 @@ const showMoreStyles = (trigger, styles) => {
 
 /***/ }),
 
+/***/ "./src/js/modules/showMoreStylesDb.js":
+/*!********************************************!*\
+  !*** ./src/js/modules/showMoreStylesDb.js ***!
+  \********************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _services_requests__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../services/requests */ "./src/js/services/requests.js");
+
+
+const showMoreStyles = (trigger, wrapper) => {
+  /**
+   * МОДУЛЬ ДЛЯ ДИНАМИЧЕСКОЙ ПОДГРУЗКИ ЭЛЕМЕНТОВ
+   *
+   * trigger  -> кнопка по нажатию на которую загружаются элементы
+   * wrapper   -> родитель куда вставлять элементы после подгрузки
+   */
+  const btn = document.querySelector(trigger);
+  btn.addEventListener('click', function () {
+    Object(_services_requests__WEBPACK_IMPORTED_MODULE_0__["getResource"])('assets/db.json').then(res => createCards(res.styles)).catch(error => console.log(error));
+    this.remove();
+  });
+
+  function createCards(response) {
+    // response -> массив в обьектами карточек
+    response.forEach(_ref => {
+      let {
+        src,
+        title,
+        link
+      } = _ref;
+      let card = document.createElement('div');
+      card.classList.add('animated', 'fadeInUp', 'col-sm-3', 'col-sm-offset-0', 'col-xs-10', 'col-xs-offset-1');
+      card.innerHTML = `
+          <div class="styles-block">
+              <img src=${src} alt="style">
+              <h4>${title}</h4>
+              <a href=${link}>Подробнее</a>
+          </div>
+      `;
+      document.querySelector(wrapper).appendChild(card);
+    });
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (showMoreStyles);
+
+/***/ }),
+
 /***/ "./src/js/modules/sliders.js":
 /*!***********************************!*\
   !*** ./src/js/modules/sliders.js ***!
@@ -619,6 +662,48 @@ const sliders = (slides, dir, prev, next) => {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (sliders);
+
+/***/ }),
+
+/***/ "./src/js/services/requests.js":
+/*!*************************************!*\
+  !*** ./src/js/services/requests.js ***!
+  \*************************************/
+/*! exports provided: postData, getResource */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "postData", function() { return postData; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getResource", function() { return getResource; });
+const postData = async (url, data) => {
+  /**
+   * Асинхронный запрос к сорверу методом POST
+   * url   -> ссылка на ресурс
+   * data  -> данные для передачи на сервер
+   */
+  let res = await fetch(url, {
+    method: "POST",
+    body: data
+  });
+  return await res.text();
+};
+
+const getResource = async url => {
+  /**
+   * Асинхронный запрос к сорверу методом GET
+   * url  -> ссылка на ресурс
+   */
+  let res = await fetch(url);
+
+  if (!res.ok) {
+    throw new Error(`Could not fetch ${url}, status: ${res.status}`);
+  }
+
+  return await res.json();
+};
+
+
 
 /***/ })
 

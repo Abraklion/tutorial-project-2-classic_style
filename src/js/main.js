@@ -2,6 +2,7 @@ import modals from './modules/modals';
 import sliders from "./modules/sliders";
 import forms from "./modules/forms";
 import showMoreStyles from "./modules/showMoreStyles";
+import showMoreStylesDb from "./modules/showMoreStylesDb";
 
 window.addEventListener('DOMContentLoaded', () => {
   'use strict';
@@ -13,6 +14,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
   forms();
 
-  showMoreStyles('.button-styles', '.styles-2');
+  // showMoreStyles('.button-styles', '.styles-2');
+  showMoreStylesDb('.button-styles', '#styles .row');
+
 
 });

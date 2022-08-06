@@ -1,5 +1,6 @@
 import mask from "../core/mask";
 import checkTextInputs from "../core/checkTextInputs";
+import {postData} from '../services/requests';
 
 const forms = () => {
 
@@ -32,21 +33,6 @@ const forms = () => {
   const path = {
     designer: 'assets/server.php',
     question: 'assets/question.php'
-  };
-
-  const postData = async (url, data) => {
-    /**
-     * асинхронный запрос к серверу
-     * url     -> адрес
-     * data   -> данные для передачи на сервер
-     */
-
-    let res = await fetch(url, {
-      method: "POST",
-      body: data
-    });
-
-    return await res.text();
   };
 
   const clearInputs = () => {
