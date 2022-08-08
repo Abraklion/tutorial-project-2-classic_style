@@ -4,6 +4,7 @@ import forms from "./modules/forms";
 import showMoreStyles from "./modules/showMoreStyles";
 import showMoreStylesDb from "./modules/showMoreStylesDb";
 import calc from './modules/calc';
+import filter from './modules/filter';
 
 window.addEventListener('DOMContentLoaded', () => {
   'use strict';
@@ -20,5 +21,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
   calc('#size', '#material', '#options', '.promocode', '.calc-price');
 
+  filter();
 
 });
