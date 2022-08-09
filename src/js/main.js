@@ -5,6 +5,7 @@ import showMoreStyles from "./modules/showMoreStyles";
 import showMoreStylesDb from "./modules/showMoreStylesDb";
 import calc from './modules/calc';
 import filter from './modules/filter';
+import pictureSize from './modules/pictureSize';
 
 window.addEventListener('DOMContentLoaded', () => {
   'use strict';
@@ -23,4 +24,5 @@ window.addEventListener('DOMContentLoaded', () => {
 
   filter();
 
+  pictureSize('.sizes-block');
 });

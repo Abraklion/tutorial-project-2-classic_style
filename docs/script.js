@@ -233,6 +233,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_showMoreStylesDb__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/showMoreStylesDb */ "./src/js/modules/showMoreStylesDb.js");
 /* harmony import */ var _modules_calc__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/calc */ "./src/js/modules/calc.js");
 /* harmony import */ var _modules_filter__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/filter */ "./src/js/modules/filter.js");
+/* harmony import */ var _modules_pictureSize__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./modules/pictureSize */ "./src/js/modules/pictureSize.js");
+
 
 
 
@@ -251,6 +253,7 @@ window.addEventListener('DOMContentLoaded', () => {
   Object(_modules_showMoreStylesDb__WEBPACK_IMPORTED_MODULE_4__["default"])('.button-styles', '#styles .row');
   Object(_modules_calc__WEBPACK_IMPORTED_MODULE_5__["default"])('#size', '#material', '#options', '.promocode', '.calc-price');
   Object(_modules_filter__WEBPACK_IMPORTED_MODULE_6__["default"])();
+  Object(_modules_pictureSize__WEBPACK_IMPORTED_MODULE_7__["default"])('.sizes-block');
 });
 
 /***/ }),
@@ -628,6 +631,63 @@ const modals = () => {
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (modals);
+
+/***/ }),
+
+/***/ "./src/js/modules/pictureSize.js":
+/*!***************************************!*\
+  !*** ./src/js/modules/pictureSize.js ***!
+  \***************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+const pictureSize = imgSelector => {
+  /**
+   * МОДУЛЬ ПОКАЗЫВАЕТ ИЗОБРАЖЕНИЯ ПРИ НАВЕДЕНИИ
+   *
+   * imgSelector  -> селектор блоков с картинками
+   */
+  const blocks = document.querySelectorAll(imgSelector);
+
+  function showImg(block) {
+    /**
+     * показать картинку
+     * block  -> элемент с картинкой внутри
+     */
+    const img = block.querySelector('img'); // something.png => something-1.png
+
+    img.src = img.src.slice(0, -4) + '-1.png';
+    block.querySelectorAll('p:not(.sizes-hit)').forEach(p => {
+      p.style.display = 'none';
+    });
+  }
+
+  function hideImg(block) {
+    /**
+     * скрыть картинку (показать заглушку)
+     * block  -> элемент с картинкой внутри
+     */
+    const img = block.querySelector('img'); // something-1.png => something.png
+
+    img.src = img.src.slice(0, -6) + '.png';
+    block.querySelectorAll('p:not(.sizes-hit)').forEach(p => {
+      p.style.display = 'block';
+    });
+  }
+
+  blocks.forEach(block => {
+    block.addEventListener('mouseover', () => {
+      showImg(block);
+    });
+    block.addEventListener('mouseout', () => {
+      hideImg(block);
+    });
+  });
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (pictureSize);
 
 /***/ }),
 
